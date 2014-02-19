@@ -205,7 +205,7 @@ string::iterator string::erase (const_iterator ep, size_type n)
 /// Erases \p n bytes at byte offset \p epo.
 string& string::erase (size_type epo, size_type n)
 {
-    erase (iat(epo), n);
+    erase (iat(epo), min (n, size()-epo));
     return (*this);
 }
 

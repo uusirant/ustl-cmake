@@ -1,0 +1,177 @@
+// config.h - Generated from config.h.in by configure.
+#ifndef USTL_CONFIG_H__
+#define USTL_CONFIG_H__
+
+// Define to the one symbol short name of this package.
+#define USTL_NAME	"@PKG_NAME@"
+// Define to the full name and version of this package.
+#define USTL_STRING	"@PKG_NAME@ @PKG_VERSTR@"
+// Define to the version of this package.
+#define USTL_VERSION	@PKG_VERSION@
+// Define to the address where bug reports for this package should be sent.
+#define USTL_BUGREPORT	"@PKG_BUGREPORT@"
+
+/// Define to 1 if you want stream operations to throw exceptions on
+/// insufficient data or insufficient space. All these errors should
+/// be preventable in output code; the input code should verify the
+/// data in a separate step. It slows down stream operations a lot,
+/// but it is your decision. By default only debug builds throw.
+///
+#define WANT_STREAM_BOUNDS_CHECKING 1
+
+#if !WANT_STREAM_BOUNDS_CHECKING && !defined(NDEBUG)
+    #define WANT_STREAM_BOUNDS_CHECKING 1
+#endif
+
+/// Define to 1 if you want backtrace symbols demangled.
+/// This adds some 15k to the library size, and requires that you link it and
+/// any executables you make with the -rdynamic flag (increasing library size
+/// even more). By default only the debug build does this.
+#undef WANT_NAME_DEMANGLING
+
+#if !WANT_NAME_DEMANGLING && !defined(NDEBUG)
+    #define WANT_NAME_DEMANGLING 1
+#endif
+
+/// Define to 1 if you want to build without libstdc++
+#define WITHOUT_LIBSTDCPP 1
+
+/// Define GNU extensions if unavailable.
+#ifndef __GNUC__
+    /// GCC (and some other compilers) define '__attribute__'; ustl is using this
+    /// macro to alert the compiler to flag inconsistencies in printf/scanf-like
+    /// function calls.  Just in case '__attribute__' is undefined, make a dummy.
+    ///
+    #ifndef __attribute__
+	#define __attribute__(p)
+    #endif
+#endif
+#if __GNUC__ >= 4
+    #define DLL_EXPORT		__attribute__((visibility("default")))
+    #define DLL_LOCAL		__attribute__((visibility("hidden")))
+    #define INLINE		__attribute__((always_inline))
+#else
+    #define DLL_EXPORT
+    #define DLL_LOCAL
+    #define INLINE
+#endif
+#if __cplusplus >= 201103L && (!__GNUC__ || (__clang_major__ > 3 || (__clang_major__ == 3 && __clang_minor__ >= 2)) || (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)))
+    #define HAVE_CPP11 1
+#endif
+#if !HAVE_CPP11
+    #define noexcept		throw()
+    #define constexpr
+#endif
+#if __GNUC__ >= 3 && (__i386__ || __x86_64__)
+    /// GCC 3+ supports the prefetch directive, which some CPUs use to improve caching
+    #define prefetch(p,rw,loc)	__builtin_prefetch(p,rw,loc)
+#else
+    #define prefetch(p,rw,loc)
+#endif
+#if __GNUC__ < 3
+    /// __alignof__ returns the recommended alignment for the type
+    #define __alignof__(v)	min(sizeof(v), sizeof(void*))
+    /// This macro returns 1 if the value of x is known at compile time.
+    #ifndef __builtin_constant_p
+	#define __builtin_constant_p(x)	0
+    #endif
+#endif
+
+// Define to empty if 'const' does not conform to ANSI C.
+@USTL_DEFINE_CONST@
+// Define as '__inline' if that is what the C compiler calls it
+@USTL_DEFINE_INLINE@
+// Define to 'long' if <sys/types.h> does not define.
+@USTL_DEFINE_OFF_T@
+// Define to 'unsigned' if <sys/types.h> does not define.
+@USTL_DEFINE_SIZE_T@
+
+/// gcc has lately decided that inline is just a suggestion
+/// Define to 1 if when you say 'inline' you mean it!
+@USTL_WANT_ALWAYS_INLINE@
+#if WANT_ALWAYS_INLINE
+    #define inline INLINE inline
+#endif
+
+@USTL_DEFINE_HEADERS@
+@USTL_DEFINE_FUNCTIONS@
+
+// STDC_HEADERS is defined to 1 on sane systems.
+#if HAVE_ASSERT_H && HAVE_CTYPE_H  && HAVE_ERRNO_H && HAVE_FLOAT_H &&\
+    HAVE_LIMITS_H && HAVE_LOCALE_H && HAVE_MATH_H  && HAVE_SIGNAL_H &&\
+    HAVE_STDARG_H && HAVE_STDDEF_H && HAVE_STDIO_H && HAVE_STDLIB_H &&\
+    HAVE_STRING_H && HAVE_TIME_H
+    #define STDC_HEADERS 1
+#endif
+
+// STDC_HEADERS is defined to 1 on unix systems.
+#if HAVE_FCNTL_H && HAVE_SYS_STAT_H && HAVE_UNISTD_H
+    #define STDUNIX_HEADERS 1
+#endif
+
+// Define to 1 if your compiler treats char as a separate type along with
+// signed char and unsigned char. This will create overloads for char.
+@USTL_HAVE_THREE_CHAR_TYPES_CODE@
+
+// Define to 1 if you have 64 bit types available
+@USTL_HAVE_INT64_T_CODE@
+
+// Define to 1 if you have the long long type
+@USTL_HAVE_LONG_LONG_CODE@
+
+// Define to 1 if you want unrolled specializations for fill and copy
+@USTL_WANT_UNROLLED_COPY_CODE@
+
+// Define to 1 if you want to use MMX/SSE/3dNow! processor instructions
+@USTL_WANT_MMX_CODE@
+
+// Define to byte sizes of types
+@SIZE_OF_CHAR_CODE@
+@SIZE_OF_SHORT_CODE@
+@SIZE_OF_INT_CODE@
+@SIZE_OF_LONG_CODE@
+@SIZE_OF_LONG_LONG_CODE@
+@SIZE_OF_POINTER_CODE@
+@SIZE_OF_SIZE_T_CODE@
+@SIZE_OF_BOOL_CODE@
+
+@USTL_SIZE_T_IS_LONG_CODE@
+
+// Byte order macros, converted in utypes.h
+#define USTL_LITTLE_ENDIAN	4321
+#define USTL_BIG_ENDIAN		1234
+#define USTL_BYTE_ORDER		USTL_@BYTE_ORDER@
+
+// Extended CPU capabilities
+@USTL_CPU_HAS_FPU_CODE@
+#undef CPU_HAS_EXT_DEBUG
+#undef CPU_HAS_TIMESTAMPC
+#undef CPU_HAS_MSR
+#undef CPU_HAS_CMPXCHG8
+#undef CPU_HAS_APIC
+#undef CPU_HAS_SYSCALL
+#undef CPU_HAS_MTRR
+#undef CPU_HAS_CMOV
+#undef CPU_HAS_FCMOV
+#if WANT_MMX
+#undef CPU_HAS_MMX
+#undef CPU_HAS_FXSAVE
+#undef CPU_HAS_SSE
+#undef CPU_HAS_SSE2
+#undef CPU_HAS_SSE3
+#undef CPU_HAS_EXT_3DNOW
+#undef CPU_HAS_3DNOW
+#endif
+
+// GCC vector extensions
+#if (CPU_HAS_MMX || CPU_HAS_SSE) && __GNUC__ >= 3
+    #undef HAVE_VECTOR_EXTENSIONS
+#endif
+
+#if CPU_HAS_SSE && __GNUC__
+    #define __sse_align	__attribute__((aligned(16)))
+#else
+    #define __sse_align
+#endif
+
+#endif /* USTL_CONFIG_H__ */
